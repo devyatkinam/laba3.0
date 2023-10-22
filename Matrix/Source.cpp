@@ -5,63 +5,77 @@ using namespace std;
 int main() {
     setlocale(LC_ALL, "Russian");
     int r, c;
-    cout << "Ââåäèòå êîëè÷åñòâî ñòðîê è ñòîëáöîâ ìàòðèöû: ";
+    cout << "Ð’Ð²ÐµÐ´Ð¸Ñ‚Ðµ ÐºÐ¾Ð»Ð¸Ñ‡ÐµÑÑ‚Ð²Ð¾ ÑÑ‚Ñ€Ð¾Ðº Ð¸ ÑÑ‚Ð¾Ð»Ð±Ñ†Ð¾Ð² Ð¼Ð°Ñ‚Ñ€Ð¸Ñ†Ñ‹: ";
     cin >> r >> c;
 
-    vector<vector<int>> m(r, vector<int>(c));
+    vector<vector<int>> mx(r, vector<int>(c));
 
-    cout << "Ââåäèòå ýëåìåíòû ìàòðèöû:" << endl;
+    cout << "Ð’Ð²ÐµÐ´Ð¸Ñ‚Ðµ ÑÐ»ÐµÐ¼ÐµÐ½Ñ‚Ñ‹ Ð¼Ð°Ñ‚Ñ€Ð¸Ñ†Ñ‹:" << endl;
     for (int i = 0; i < r; i++) {
         for (int j = 0; j < c; j++) {
-            cin >> m[i][j];
+            cin >> mx[i][j];
         }
     }
 
-    vector<int> s(c, 0); 
-
-    for (int j = 0; j < c; j++) {
-        for (int i = 0; i < r; i++) {
-            if (m[i][j] < 0 && m[i][j] % 2 != 0) {
-                s[j] += abs(m[i][j]);
-            }
-        }
-    }
-
-    for (int i = 0; i < c - 1; i++) {
-        for (int j = 0; j < c - i - 1; j++) {
-            if (s[j] > s[j + 1]) {
-                int t = s[j];
-                s[j] = s[j + 1];
-                s[j + 1] = t;
-
-                for (int k = 0; k < r; k++) {
-                    int v = m[k][j];
-                    m[k][j] = m[k][j + 1];
-                    m[k][j + 1] = v;
+    for (int i = 0; i < r; i++) {
+        for (int j = 0; j < c; j++) {
+            int sum_ij = i + j;
+            if (sum_ij % 2 == 0) {
+                int m = i;
+                int n = j;
+                if (i % 2 == 0) {
+                    if (j == c - 1) {
+                        m = i + 1;
+                        n = 0;
+                    }
+                    else {
+                        m = i;
+                        n = j + 1;
+                    }
                 }
+                else {
+                    if (j == 0) {
+                        m = i + 1;
+                        n = c - 1;
+                    }
+                    else {
+                        m = i;
+                        n = j - 1;
+                    }
+                }
+                int temp = mx[i][j];
+                mx[i][j] = mx[m][n];
+                mx[m][n] = temp;
             }
         }
     }
 
-    cout << "Ïîëó÷åííàÿ ìàòðèöà:" << endl;
+    cout << "Ð˜Ð·Ð¼ÐµÐ½ÐµÐ½Ð½Ð°Ñ Ð¼Ð°Ñ‚Ñ€Ð¸Ñ†Ð°:" << endl;
     for (int i = 0; i < r; i++) {
         for (int j = 0; j < c; j++) {
-            cout << m[i][j] << " ";
+            cout << mx[i][j] << " ";
         }
         cout << endl;
     }
 
-    int snegc = 0;
-    for (int i = 0; i < c; i++) {
-        for (int j = 0; j < r; j++) {
-            if (m[j][i] < 0) {
-                snegc += m[j][i];
-                break;
+    vector<int> sneg(c, 0);
+    for (int i = 0; i < r; i++) {
+        for (int j = 0; j < c; j++) {
+            if (mx[i][j] < 0) {
+                sneg[j] = 1;
             }
         }
     }
 
-    cout << "Ñóììà ýëåìåíòîâ â ñòîëáöàõ ñ îòðèöàòåëüíûìè ýëåìåíòàìè: " << snegc << endl;
+    for (int j = 0; j < c; j++) {
+        if (sneg[j] == 1) {
+            int col_sum = 0;
+            for (int i = 0; i < r; i++) {
+                col_sum += mx[i][j];
+            }
+            cout << "Ð¡ÑƒÐ¼Ð¼Ð° ÑÐ»ÐµÐ¼ÐµÐ½Ñ‚Ð¾Ð² Ð² ÑÑ‚Ð¾Ð»Ð±Ñ†Ðµ " << j << " Ñ Ð¾Ñ‚Ñ€Ð¸Ñ†Ð°Ñ‚ÐµÐ»ÑŒÐ½Ñ‹Ð¼Ð¸ ÑÐ»ÐµÐ¼ÐµÐ½Ñ‚Ð°Ð¼Ð¸: " << col_sum << endl;
+        }
+    }
 
     return 0;
 }
